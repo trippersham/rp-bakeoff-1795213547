@@ -1,0 +1,32 @@
+name: ci
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, edited]
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "offline gate ok"
+  pr-body:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python scripts/check_pr.py --event "$GITHUB_EVENT_PATH"
+  ci-ok:
+    needs: [check, pr-body]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - run: |
+          for r in "${{ needs.check.result }}" "${{ needs.pr-body.result }}"; do
+            case "$r" in
+              success|skipped) ;;
+              *) echo "gate failed: $r"; exit 1;;
+            esac
+          done
+          echo "ci-ok"

@@ -1,0 +1,18 @@
+name: release-please
+on:
+  push:
+    branches: [main]
+permissions:
+  contents: write
+  pull-requests: write
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      # Default token is GITHUB_TOKEN -> this is exactly the config that
+      # triggers the "PRs opened by GITHUB_TOKEN don't start other workflows"
+      # question we are here to test.
+      - uses: googleapis/release-please-action@v4
+        with:
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json

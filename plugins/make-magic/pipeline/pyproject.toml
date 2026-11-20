@@ -1,0 +1,4 @@
+[project]
+name = "make-magic-pipeline"
+version = "0.1.0" # x-release-please-version
+description = "bake-off fixture"
